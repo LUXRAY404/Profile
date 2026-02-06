@@ -1,1 +1,956 @@
-<h2>INTELEON404</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXRAY404 | Offensive Security Research Laboratory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables - Research Lab Palette */
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --gray-10: #FAFAFA;
+            --gray-50: #F5F5F5;
+            --gray-100: #EEEEEE;
+            --gray-200: #E0E0E0;
+            --gray-300: #BDBDBD;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+            --border-width: 1.2px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+            --container-width: 1280px;
+            --grid-gap: 1.5rem;
+            --section-spacing: 5rem;
+        }
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--gray-900);
+            background-color: var(--white);
+            line-height: 1.7;
+            font-weight: 400;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Research Header */
+        .research-header {
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            border-bottom: var(--border-width) solid var(--black);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .header-container {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 1.2rem 0;
+            gap: 2rem;
+        }
+
+        .lab-identity {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+
+        .lab-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            text-transform: uppercase;
+            color: var(--black);
+        }
+
+        .lab-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gray-700);
+            letter-spacing: 0.05em;
+        }
+
+        .version-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border: var(--border-width) solid var(--gray-300);
+            background: var(--gray-10);
+            color: var(--gray-800);
+            letter-spacing: 0.05em;
+        }
+
+        .research-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            justify-content: flex-end;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-800);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--black);
+            transition: width 0.2s ease;
+        }
+
+        .nav-link:hover:after {
+            width: 100%;
+        }
+
+        /* Hero / Abstract Section */
+        .research-hero {
+            padding: var(--section-spacing) 0;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .research-abstract h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            color: var(--black);
+        }
+
+        .abstract-body {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-800);
+            max-width: 60ch;
+        }
+
+        .lab-quantifiers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--gray-200);
+            border: var(--border-width) solid var(--black);
+        }
+
+        .quantifier {
+            background: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .quantifier-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--black);
+            margin-bottom: 0.25rem;
+        }
+
+        .quantifier-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-700);
+        }
+
+        .research-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: var(--border-width) solid var(--gray-200);
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border: var(--border-width) solid var(--gray-300);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: var(--gray-10);
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 3rem;
+            border-bottom: var(--border-width) solid var(--gray-900);
+            padding-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--black);
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            margin-top: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.02em;
+        }
+
+        /* Research Focus */
+        .research-focus {
+            padding: var(--section-spacing) 0;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .focus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .focus-card {
+            border: var(--border-width) solid var(--gray-300);
+            padding: 2rem;
+            background: var(--white);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .focus-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .focus-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .focus-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--black);
+        }
+
+        .focus-card-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gray-700);
+            background: var(--gray-50);
+            padding: 0.25rem 0.5rem;
+            border: var(--border-width) solid var(--gray-200);
+        }
+
+        .focus-card-body {
+            color: var(--gray-800);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .focus-references {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: var(--border-width) solid var(--gray-100);
+        }
+
+        .reference-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border: var(--border-width) solid var(--gray-300);
+            background: var(--gray-50);
+            color: var(--gray-800);
+        }
+
+        /* Methodology */
+        .research-methodology {
+            padding: var(--section-spacing) 0;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .methodology-framework {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--gray-200);
+            border: var(--border-width) solid var(--black);
+            margin-top: 2rem;
+        }
+
+        .methodology-phase {
+            background: var(--white);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .phase-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        .phase-description {
+            font-size: 0.95rem;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .phase-connector {
+            position: absolute;
+            top: 50%;
+            right: -1px;
+            width: 2px;
+            height: 20px;
+            background: var(--gray-400);
+            transform: translateY(-50%);
+        }
+
+        /* Tools & Environment */
+        .research-tools {
+            padding: var(--section-spacing) 0;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-category {
+            border: var(--border-width) solid var(--gray-300);
+            padding: 1.5rem;
+        }
+
+        .tool-category-header {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--black);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .tool-list {
+            list-style: none;
+        }
+
+        .tool-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.95rem;
+            color: var(--gray-800);
+        }
+
+        .tool-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Proof of Concept */
+        .research-poc {
+            padding: var(--section-spacing) 0;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .poc-terminal {
+            border: var(--border-width) solid var(--black);
+            background: var(--black);
+            color: var(--gray-100);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        .poc-header {
+            padding: 0.75rem 1.5rem;
+            border-bottom: var(--border-width) solid var(--gray-800);
+            background: var(--gray-900);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .poc-title {
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            color: var(--gray-300);
+        }
+
+        .poc-environment {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .poc-body {
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.75rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .terminal-prompt {
+            color: #00FF9D;
+        }
+
+        .terminal-comment {
+            color: var(--gray-600);
+        }
+
+        .terminal-cve {
+            color: #FF6B6B;
+            font-weight: 500;
+        }
+
+        .terminal-cvss {
+            color: #FFD166;
+        }
+
+        /* Ethical Framework */
+        .ethical-framework {
+            padding: var(--section-spacing) 0;
+            background: var(--gray-10);
+            border-top: var(--border-width) solid var(--black);
+        }
+
+        .framework-statement {
+            max-width: 70ch;
+            margin: 0 auto 3rem;
+            text-align: center;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--gray-800);
+            font-style: italic;
+        }
+
+        .research-motto {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--black);
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: var(--border-width) solid var(--gray-200);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .contact-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .contact-link:hover {
+            border-bottom: 1px solid var(--black);
+        }
+
+        /* Footer */
+        .research-footer {
+            padding: 2rem 0;
+            border-top: var(--border-width) solid var(--gray-300);
+            background: var(--white);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            letter-spacing: 0.05em;
+        }
+
+        .footer-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .methodology-framework {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .research-nav ul {
+                justify-content: flex-start;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+            }
+            
+            .methodology-framework {
+                grid-template-columns: 1fr;
+            }
+            
+            .focus-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .lab-quantifiers {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Utility */
+        .monospace {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .letter-spacing-wide {
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Research Header -->
+    <header class="research-header">
+        <div class="container header-container">
+            <div class="lab-identity">
+                <div class="lab-name">LUXRAY404</div>
+                <div class="lab-id monospace">LAB_ID: 0xRESEARCH</div>
+            </div>
+            
+            <nav class="research-nav">
+                <ul>
+                    <li><a href="#abstract" class="nav-link">Abstract</a></li>
+                    <li><a href="#focus" class="nav-link">Research Focus</a></li>
+                    <li><a href="#methodology" class="nav-link">Methodology</a></li>
+                    <li><a href="#tools" class="nav-link">Tools</a></li>
+                    <li><a href="#poc" class="nav-link">Proof of Concept</a></li>
+                    <li><a href="#ethics" class="nav-link">Ethics</a></li>
+                </ul>
+            </nav>
+            
+            <div class="version-badge monospace">v2.4.1</div>
+        </div>
+    </header>
+
+    <!-- Hero / Abstract -->
+    <section id="abstract" class="research-hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="research-abstract">
+                    <h1>Offensive Security Research & Vulnerability Analysis</h1>
+                    <div class="abstract-body">
+                        <p>LUXRAY404 conducts methodical offensive security research with academic rigor. Our focus is systematic vulnerability discovery, exploitation theory, and real-world impact assessment. Research is conducted in controlled, isolated environments following strict ethical protocols.</p>
+                        <p>All findings undergo peer review and are disclosed through coordinated vulnerability disclosure channels. The laboratory maintains zero engagement in unauthorized testing or production system interference.</p>
+                    </div>
+                    
+                    <div class="research-badges">
+                        <div class="badge">OSCP CERTIFIED</div>
+                        <div class="badge">CRTO</div>
+                        <div class="badge">CVE CONTRIBUTOR</div>
+                        <div class="badge">RESPONSIBLE DISCLOSURE</div>
+                        <div class="badge">ACADEMIC AFFILIATION</div>
+                        <div class="badge">ISO/IEC 29147</div>
+                    </div>
+                </div>
+                
+                <div class="lab-quantifiers">
+                    <div class="quantifier">
+                        <div class="quantifier-value">47</div>
+                        <div class="quantifier-label">CVEs Discovered</div>
+                    </div>
+                    <div class="quantifier">
+                        <div class="quantifier-value">8</div>
+                        <div class="quantifier-label">Research Papers</div>
+                    </div>
+                    <div class="quantifier">
+                        <div class="quantifier-value">100%</div>
+                        <div class="quantifier-label">Ethical Compliance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Focus -->
+    <section id="focus" class="research-focus">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Research Focus Areas</h2>
+                <div class="section-subtitle">Systematic investigation of vulnerability classes and exploitation techniques</div>
+            </div>
+            
+            <div class="focus-grid">
+                <div class="focus-card">
+                    <div class="focus-card-header">
+                        <h3 class="focus-card-title">Web Application Security</h3>
+                        <div class="focus-card-id">FOCUS-01</div>
+                    </div>
+                    <div class="focus-card-body">
+                        Investigation of modern web exploitation techniques including XSS, SSTI, command injection, and business logic vulnerabilities. Research includes WAF bypass techniques and API security testing methodologies.
+                    </div>
+                    <div class="focus-references">
+                        <span class="reference-tag">CWE-79</span>
+                        <span class="reference-tag">CWE-89</span>
+                        <span class="reference-tag">OWASP-2021</span>
+                        <span class="reference-tag">CVSS:4.0</span>
+                    </div>
+                </div>
+                
+                <div class="focus-card">
+                    <div class="focus-card-header">
+                        <h3 class="focus-card-title">Attack Surface Analysis</h3>
+                        <div class="focus-card-id">FOCUS-02</div>
+                    </div>
+                    <div class="focus-card-body">
+                        Systematic mapping and analysis of enterprise attack surfaces across cloud infrastructure, network perimeters, and hybrid environments. Research on automated attack path discovery and privilege escalation vectors.
+                    </div>
+                    <div class="focus-references">
+                        <span class="reference-tag">ASM</span>
+                        <span class="reference-tag">CWE-269</span>
+                        <span class="reference-tag">MITRE ATT&CK</span>
+                        <span class="reference-tag">Cloud Security</span>
+                    </div>
+                </div>
+                
+                <div class="focus-card">
+                    <div class="focus-card-header">
+                        <h3 class="focus-card-title">Vulnerability Research</h3>
+                        <div class="focus-card-id">FOCUS-03</div>
+                    </div>
+                    <div class="focus-card-body">
+                        Methodological vulnerability discovery, classification, and exploit development. Emphasis on reproducibility, documentation standards, and theoretical foundations of exploitation across different system architectures.
+                    </div>
+                    <div class="focus-references">
+                        <span class="reference-tag">CVE</span>
+                        <span class="reference-tag">EPSS</span>
+                        <span class="reference-tag">Exploit Dev</span>
+                        <span class="reference-tag">Academic Research</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology -->
+    <section id="methodology" class="research-methodology">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Research Methodology</h2>
+                <div class="section-subtitle">Structured framework for offensive security research</div>
+            </div>
+            
+            <div class="methodology-framework">
+                <div class="methodology-phase">
+                    <div class="phase-number monospace">PHASE 01</div>
+                    <h3 class="phase-title">Intelligence Gathering</h3>
+                    <div class="phase-description">
+                        Comprehensive reconnaissance using passive and active techniques. Asset discovery, attack surface mapping, and threat modeling. All activities conducted within authorized scope.
+                    </div>
+                </div>
+                
+                <div class="methodology-phase">
+                    <div class="phase-number monospace">PHASE 02</div>
+                    <h3 class="phase-title">Vulnerability Analysis</h3>
+                    <div class="phase-description">
+                        Systematic identification of vulnerabilities using static and dynamic analysis. Proof-of-concept development and impact assessment using CVSS 4.0 framework.
+                    </div>
+                </div>
+                
+                <div class="methodology-phase">
+                    <div class="phase-number monospace">PHASE 03</div>
+                    <h3 class="phase-title">Controlled Exploitation</h3>
+                    <div class="phase-description">
+                        Ethical exploitation in isolated test environments. Privilege escalation simulation, lateral movement analysis, and persistence mechanism research.
+                    </div>
+                </div>
+                
+                <div class="methodology-phase">
+                    <div class="phase-number monospace">PHASE 04</div>
+                    <h3 class="phase-title">Disclosure & Documentation</h3>
+                    <div class="phase-description">
+                        Detailed technical reporting, remediation guidance, and coordinated disclosure following ISO/IEC 29147 standards. Research papers and advisory publication.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools & Environment -->
+    <section id="tools" class="research-tools">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Laboratory Environment</h2>
+                <div class="section-subtitle">Specialized tooling and controlled research infrastructure</div>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-category">
+                    <h4 class="tool-category-header">Operating Environment</h4>
+                    <ul class="tool-list">
+                        <li class="tool-item">Kali Linux Research Build</li>
+                        <li class="tool-item">Parrot Security OS</li>
+                        <li class="tool-item">Custom Research Distribution</li>
+                        <li class="tool-item">VMware ESXi Infrastructure</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-category">
+                    <h4 class="tool-category-header">Reconnaissance</h4>
+                    <ul class="tool-list">
+                        <li class="tool-item">Burp Suite Professional</li>
+                        <li class="tool-item">Nuclei Templates</li>
+                        <li class="tool-item">Custom Python/Rust Tooling</li>
+                        <li class="tool-item">Nmap Scripting Engine</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-category">
+                    <h4 class="tool-category-header">Exploitation</h4>
+                    <ul class="tool-list">
+                        <li class="tool-item">Metasploit Framework</li>
+                        <li class="tool-item">Ghidra RE Suite</li>
+                        <li class="tool-item">Custom Exploit Frameworks</li>
+                        <li class="tool-item">Frida Dynamic Instrumentation</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-category">
+                    <h4 class="tool-category-header">Isolation & Testing</h4>
+                    <ul class="tool-list">
+                        <li class="tool-item">Docker Containers</li>
+                        <li class="tool-item">Network Segmentation</li>
+                        <li class="tool-item">Snapshot Management</li>
+                        <li class="tool-item">Traffic Analysis</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proof of Concept -->
+    <section id="poc" class="research-poc">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Proof of Concept Demonstration</h2>
+                <div class="section-subtitle">Sanitized research output from controlled environment</div>
+            </div>
+            
+            <div class="poc-terminal">
+                <div class="poc-header">
+                    <div class="poc-title">LUXRAY404 RESEARCH TERMINAL — ISOLATED LAB ENVIRONMENT</div>
+                    <div class="poc-environment monospace">ENV_ID: LAB-ISO-04</div>
+                </div>
+                <div class="poc-body">
+                    <div class="terminal-line"><span class="terminal-prompt">research@luxray404-lab:~$</span> whoami</div>
+                    <div class="terminal-line">luxray404-researcher</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">research@luxray404-lab:~$</span> ./scan --target authorized_scope_only</div>
+                    <div class="terminal-line">[+] INITIALIZING VULNERABILITY SCAN: 2024-04-15 14:30:22 UTC</div>
+                    <div class="terminal-line">[+] ENVIRONMENT: ISOLATED LAB NETWORK (SEGMENT 04)</div>
+                    <div class="terminal-line">[+] ATTACK SURFACE IDENTIFIED: 3 WEB APPLICATIONS, 8 API ENDPOINTS</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">[+]</span> VULNERABILITY DETECTED: <span class="terminal-cve">CVE-2024-XXXX</span> (SQL INJECTION)</div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] CVSS SCORE: 8.1 (HIGH) | VECTOR: <span class="terminal-cvss">CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N</span></div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] IMPACT: AUTHENTICATION BYPASS, DATA EXFILTRATION</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">[+]</span> VULNERABILITY DETECTED: <span class="terminal-cve">CVE-2024-YYYY</span> (XSS - DOM-BASED)</div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] CVSS SCORE: 6.5 (MEDIUM) | VECTOR: <span class="terminal-cvss">CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N</span></div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] IMPACT: SESSION HIJACKING, CLIENT-SIDE CODE EXECUTION</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">research@luxray404-lab:~$</span> ./generate-poc --cve CVE-2024-XXXX --env isolated</div>
+                    <div class="terminal-line">[+] PROOF OF CONCEPT GENERATED: /research/pocs/cve-2024-xxxx.py</div>
+                    <div class="terminal-line">[+] TESTING IN ISOLATED ENVIRONMENT: SUCCESS</div>
+                    <div class="terminal-line">[+] NO PRODUCTION SYSTEMS ACCESSED</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">research@luxray404-lab:~$</span> ./prepare-disclosure --cve CVE-2024-XXXX --cve CVE-2024-YYYY</div>
+                    <div class="terminal-line">[+] RESPONSIBLE DISCLOSURE PACKAGE PREPARED</div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] TECHNICAL REPORT: /reports/disclosure_20240415.pdf</div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] REMEDIATION GUIDANCE: INCLUDED</div>
+                    <div class="terminal-line">[&nbsp;&nbsp;] VENDOR NOTIFICATION: READY</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">research@luxray404-lab:~$</span> <span class="terminal-comment"># RESEARCH CYCLE COMPLETE. ALL ACTIVITIES CONDUCTED IN ISOLATED LAB.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ethical Framework -->
+    <section id="ethics" class="ethical-framework">
+        <div class="container">
+            <div class="research-motto">"EXPLOIT TO UNDERSTAND, NOT TO DAMAGE"</div>
+            
+            <div class="framework-statement">
+                LUXRAY404 operates under strict ethical guidelines. All research is conducted in authorized, isolated environments. 
+                Vulnerabilities are reported through coordinated disclosure channels following ISO/IEC 29147 standards. 
+                The laboratory maintains zero tolerance for unauthorized testing, production system interference, or malicious activity.
+            </div>
+            
+            <div class="contact-links">
+                <a href="mailto:research@luxray404.io" class="contact-link">research@luxray404.io</a>
+                <a href="#" class="contact-link">GPG: 0xA1B2C3D4E5F67890</a>
+                <a href="#" class="contact-link">CVE DISCLOSURE COORDINATION</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="research-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    © 2024 LUXRAY404 SECURITY RESEARCH LABORATORY | ALL RIGHTS RESERVED
+                </div>
+                <div class="footer-id monospace">
+                    LAB_ID: 0xRESEARCH | CLEARANCE: LUXRAY404
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Sticky header shadow
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.research-header');
+            if (window.scrollY > 20) {
+                header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Terminal typing effect
+        document.addEventListener('DOMContentLoaded', () => {
+            const terminalLines = document.querySelectorAll('.terminal-line');
+            terminalLines.forEach((line, index) => {
+                line.style.opacity = '0';
+                line.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    line.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    line.style.opacity = '1';
+                    line.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
